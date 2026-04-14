@@ -124,3 +124,56 @@ GRANT EXECUTE ON FUNCTION public.repair_user_metadata
 
 REVOKE EXECUTE ON FUNCTION public.repair_user_metadata
   FROM PUBLIC, anon, authenticated;
+
+-- ================================================
+-- SECTION 5: GLOBAL EMAIL CONFLICT CHECK
+-- ================================================
+
+CREATE OR REPLACE FUNCTION public.check_email_exists_globally(
+  p_email text
+)
+RETURNS boolean
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, auth
+AS $$
+DECLARE
+  v_exists boolean;
+BEGIN
+  SELECT EXISTS (
+    SELECT 1
+    FROM auth.users
+    WHERE email = lower(trim(p_email))
+  ) INTO v_exists;
+
+  RETURN v_exists;
+END;
+$$;
+
+-- Service role only — never callable by client
+GRANT EXECUTE ON FUNCTION 
+  public.check_email_exists_globally
+  TO service_role;
+
+REVOKE EXECUTE ON FUNCTION 
+  public.check_email_exists_globally
+  FROM PUBLIC, anon, authenticated;
+
+-- ================================================
+-- ARCHITECTURE NOTE:
+-- ================================================
+
+-- ARCHITECTURE CONSTRAINT: One email = one tenant
+-- 
+-- This system uses app_metadata.tenant_id (singular).
+-- A single auth.user cannot belong to multiple tenants
+-- in the current schema.
+--
+-- To support multi-tenant membership in the future:
+-- 1. Change app_metadata to { tenant_ids: uuid[] }
+-- 2. Create a junction table: user_tenant_memberships
+-- 3. Update all RLS policies to check array membership
+-- 4. Update all JWT extraction to handle array claims
+--
+-- This is a POST-MVP architectural upgrade.
+-- Do NOT attempt this change mid-build.
