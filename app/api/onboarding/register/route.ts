@@ -1,9 +1,18 @@
 /*
- * SECURITY: tenant_id is assigned ONLY in this route.
- * It is NEVER accepted from client input.
- * It is stored in app_metadata (server-controlled).
- * It is immutable after creation.
- * Do NOT add any endpoint that allows tenant_id updates.
+ * SECURITY: Tenant Onboarding Route
+ * 
+ * tenant_id is NEVER accepted from client input.
+ * tenant_id is generated server-side in SQL function.
+ * tenant_id is stored in app_metadata (server-only).
+ * tenant_id is immutable after creation.
+ * 
+ * FAILURE MODES:
+ * - Auth creation fails     → return 500, nothing to clean
+ * - SQL function fails      → return 500, delete auth user
+ * - Metadata inject fails   → CRITICAL: rollback everything
+ * - Metadata verify fails   → CRITICAL: rollback everything
+ * 
+ * A user must NEVER exist without tenant_id in app_metadata.
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -21,6 +30,20 @@ const supabaseAdmin = createClient(
     }
   }
 )
+
+/**
+ * Rollback helper for onboarding failures
+ */
+async function rollbackOnboarding(
+  auth_id: string, 
+  reason: string
+): Promise<void> {
+  console.error(`[ONBOARDING ROLLBACK] Reason: ${reason}`)
+  const { error } = await supabaseAdmin.auth.admin.deleteUser(auth_id)
+  if (error) {
+    console.error('[ROLLBACK FAILED] Auth user orphaned:', auth_id, error)
+  }
+}
 
 const RegisterSchema = z.object({
   email:     z.string().email(),
@@ -76,7 +99,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Tenant setup failed' }, { status: 500 })
     }
 
-    // STEP 4 — Inject tenant_id and role into auth metadata
+    // STEP 4 — Inject tenant_id into JWT app_metadata
+    // CRITICAL: failure here = zombie account
+    // Must rollback entirely if this fails
     const { error: metadataError } = await supabaseAdmin.auth.admin.updateUserById(auth_id, {
       app_metadata: {
         tenant_id: onboardingResult.tenant_id,
@@ -85,8 +110,26 @@ export async function POST(request: NextRequest) {
     })
 
     if (metadataError) {
-      console.warn('[METADATA WARNING]', metadataError)
-      // Non-fatal, return success anyway
+      console.error('[METADATA FAILED]', metadataError)
+      await rollbackOnboarding(auth_id, 'app_metadata injection failed')
+      return NextResponse.json(
+        { error: 'Account setup failed. Please try again.' },
+        { status: 500 }
+      )
+    }
+
+    // STEP 4b — Verify metadata was actually written
+    const { data: verifyUser, error: verifyError } = await supabaseAdmin.auth.admin.getUserById(auth_id)
+    
+    const writtenTenantId = verifyUser?.user?.app_metadata?.tenant_id
+
+    if (verifyError || !writtenTenantId) {
+      console.error('[METADATA VERIFY FAILED]', { verifyError, writtenTenantId })
+      await rollbackOnboarding(auth_id, 'app_metadata verification failed')
+      return NextResponse.json(
+        { error: 'Account setup failed. Please try again.' },
+        { status: 500 }
+      )
     }
 
     // STEP 6 — Return success
