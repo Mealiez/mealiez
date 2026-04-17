@@ -31,5 +31,9 @@ export async function updateSession(request: NextRequest) {
   // https://supabase.com/docs/guides/auth/server-side/nextjs
   await supabase.auth.getUser()
 
+  // OPTIONAL: You can add logic here to redirect if user is not found,
+  // but the current architecture handles this in requireAuth() and useAuthGuard.
+  // We just want the session to be refreshed here.
+
   return supabaseResponse
 }

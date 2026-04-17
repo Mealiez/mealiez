@@ -250,7 +250,7 @@ export default function PlanItemsEditor({ plan, canManage }: Props) {
                     required
                     type="text"
                     value={addForm.name}
-                    onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))}
+                    onChange={e => setAddForm(prev => ({ ...prev, name: e.target.value }))}
                     placeholder="e.g., Vegetable Biryani"
                     className="w-full bg-white px-3 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -260,11 +260,12 @@ export default function PlanItemsEditor({ plan, canManage }: Props) {
                   <input
                     type="text"
                     value={addForm.description}
-                    onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))}
+                    onChange={e => setAddForm(prev => ({ ...prev, description: e.target.value }))}
                     placeholder="Brief description..."
                     className="w-full bg-white px-3 py-2 border border-gray-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
+
                 <div className="flex gap-2">
                   <button
                     type="submit"
