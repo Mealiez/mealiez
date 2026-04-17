@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Architectural Admin - User Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error-container": "#ffdad6",
+                    "surface": "#f9f9ff",
+                    "on-secondary-container": "#fefcff",
+                    "surface-tint": "#732ee4",
+                    "outline": "#7b7487",
+                    "error": "#ba1a1a",
+                    "background": "#f9f9ff",
+                    "on-secondary-fixed-variant": "#004395",
+                    "secondary-fixed": "#d8e2ff",
+                    "tertiary": "#704500",
+                    "surface-container-high": "#e2e8f8",
+                    "surface-container-lowest": "#ffffff",
+                    "primary": "#630ed4",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "inverse-surface": "#2a313d",
+                    "surface-variant": "#dce2f3",
+                    "on-tertiary-fixed": "#2a1700",
+                    "primary-container": "#7c3aed",
+                    "secondary-container": "#2170e4",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "surface-dim": "#d3daea",
+                    "surface-container-low": "#f0f3ff",
+                    "on-primary-fixed": "#25005a",
+                    "on-background": "#151c27",
+                    "on-primary-fixed-variant": "#5a00c6",
+                    "surface-container": "#e7eefe",
+                    "on-tertiary": "#ffffff",
+                    "on-tertiary-container": "#ffe1c0",
+                    "on-secondary-fixed": "#001a42",
+                    "on-secondary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "secondary": "#0058be",
+                    "on-primary": "#ffffff",
+                    "tertiary-container": "#905b00",
+                    "inverse-primary": "#d2bbff",
+                    "outline-variant": "#ccc3d8",
+                    "surface-bright": "#f9f9ff",
+                    "on-surface": "#151c27",
+                    "surface-container-highest": "#dce2f3",
+                    "primary-fixed": "#eaddff",
+                    "on-surface-variant": "#4a4455",
+                    "secondary-fixed-dim": "#adc6ff",
+                    "on-primary-container": "#ede0ff",
+                    "inverse-on-surface": "#ebf1ff",
+                    "primary-fixed-dim": "#d2bbff",
+                    "tertiary-fixed": "#ffddb8"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .tonal-glass {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopNavBar -->
+<header class="bg-white dark:bg-slate-950 border-b-0 sticky top-0 z-40">
+<div class="flex justify-between items-center w-full px-10 h-16 max-w-[1440px] mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold text-slate-900 dark:text-white">The Architectural Admin</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 text-[11px] uppercase tracking-wider font-semibold" href="#">Dashboard</a>
+<a class="text-violet-700 dark:text-violet-400 font-semibold border-b-2 border-violet-600 pb-2 text-[11px] uppercase tracking-wider font-semibold" href="#">Users</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 text-[11px] uppercase tracking-wider font-semibold" href="#">Activity</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 text-[11px] uppercase tracking-wider font-semibold" href="#">Logs</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-slate-50 dark:bg-slate-800 text-slate-600 px-4 py-2 rounded-lg hover:bg-slate-100 transition-all text-sm font-medium">Support</button>
+<button class="bg-primary-container text-on-primary-container px-4 py-2 rounded-lg hover:opacity-90 active:scale-95 transition-all text-sm font-semibold">Invite user</button>
+<img alt="Admin Avatar" class="w-8 h-8 rounded-full bg-surface-container-high" data-alt="Close-up professional portrait of a tech executive in a minimal grey studio setting with soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDonsrR2Hz4Et6bQx5fpl6KwzAO0qpz_a5ol5vO9p9emW8i-ld7P7Xr0NoyYQQWJEgUeIeNKGIBtm0dFZwS7PwJsMpMMgQorQuMs-Kn55frvrs5CkiJ6mME-zKIhS8L0N3-cRK_8E66UvEPFB4dlopa5mXk1K36tKX4Q5ayEQqS6fPpf3lkqC_YH-nuNBjQ6SXGThpclq-IzL3_sR4asNU1uczL7wquw0GibQX-KIltkEt9Smhr8N_StSd8w5BrguglFc_t7gzqSkg"/>
+</div>
+</div>
+</header>
+<div class="flex min-h-[calc(100vh-4rem)]">
+<!-- SideNavBar -->
+<aside class="bg-slate-50 dark:bg-slate-900 w-64 flex-shrink-0 flex flex-col py-6 sticky top-16 h-[calc(100vh-4rem)]">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center text-white font-black">A</div>
+<div>
+<h2 class="text-lg font-black text-violet-700 dark:text-violet-400 leading-tight">Atrium Corp</h2>
+<p class="text-xs uppercase tracking-widest text-slate-500">Enterprise Admin</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 py-2.5 px-4 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 mx-2 transition-transform duration-200 hover:translate-x-1 group" href="#">
+<span class="material-symbols-outlined" data-icon="corporate_fare">corporate_fare</span>
+<span class="text-sm font-medium">Organization</span>
+</a>
+<a class="flex items-center gap-3 py-2.5 px-4 bg-white dark:bg-slate-800 text-violet-700 dark:text-violet-300 shadow-sm rounded-lg mx-2 transition-all ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="text-sm font-medium">User Directory</span>
+</a>
+<a class="flex items-center gap-3 py-2.5 px-4 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 mx-2 transition-transform duration-200 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="verified_user">verified_user</span>
+<span class="text-sm font-medium">Role Permissions</span>
+</a>
+<a class="flex items-center gap-3 py-2.5 px-4 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 mx-2 transition-transform duration-200 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="list_alt">list_alt</span>
+<span class="text-sm font-medium">Access Logs</span>
+</a>
+<a class="flex items-center gap-3 py-2.5 px-4 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 mx-2 transition-transform duration-200 hover:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="shield">shield</span>
+<span class="text-sm font-medium">Security Settings</span>
+</a>
+</nav>
+<div class="px-6 mt-auto space-y-6">
+<button class="w-full py-2.5 bg-violet-100 text-violet-700 rounded-lg text-sm font-bold hover:bg-violet-200 transition-colors">Upgrade Plan</button>
+<div class="pt-4 border-t border-slate-200 dark:border-slate-800 space-y-1">
+<a class="flex items-center gap-3 py-2 px-2 text-slate-500 hover:text-slate-900 transition-colors" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="settings">settings</span>
+<span class="text-xs uppercase tracking-widest font-semibold">Settings</span>
+</a>
+<a class="flex items-center gap-3 py-2 px-2 text-slate-500 hover:text-slate-900 transition-colors" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="logout">logout</span>
+<span class="text-xs uppercase tracking-widest font-semibold">Logout</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 p-10 bg-surface-container-low relative overflow-hidden">
+<!-- Content Behind Modal (Dimmed) -->
+<div class="opacity-40 pointer-events-none transition-opacity duration-300">
+<div class="flex justify-between items-end mb-12">
+<div>
+<h1 class="text-[2.75rem] font-bold tracking-tight text-on-surface leading-none mb-2">User Directory</h1>
+<p class="text-on-surface-variant font-medium">Manage organization members and their access levels.</p>
+</div>
+<div class="flex gap-4">
+<div class="bg-surface-container-lowest px-6 py-4 rounded-xl shadow-sm">
+<p class="text-[0.6875rem] uppercase tracking-widest text-slate-500 font-bold mb-1">Total Users</p>
+<p class="text-3xl font-bold text-primary">1,284</p>
+</div>
+<div class="bg-surface-container-lowest px-6 py-4 rounded-xl shadow-sm">
+<p class="text-[0.6875rem] uppercase tracking-widest text-slate-500 font-bold mb-1">Active Now</p>
+<p class="text-3xl font-bold text-secondary">42</p>
+</div>
+</div>
+</div>
+<!-- Bento Grid Layout for Users -->
+<div class="grid grid-cols-12 gap-6">
+<div class="col-span-8 bg-surface-container-lowest rounded-xl p-8 shadow-sm">
+<div class="flex justify-between items-center mb-8">
+<h3 class="text-xl font-semibold">Recent Members</h3>
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-slate-400" data-icon="search">search</span>
+<input class="bg-transparent border-none text-sm focus:ring-0" placeholder="Search members..." type="text"/>
+</div>
+</div>
+<div class="space-y-6">
+<!-- User Row -->
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-600">JD</div>
+<div>
+<p class="font-semibold text-on-surface">Jane Doe</p>
+<p class="text-xs text-slate-500">jane.doe@atrium.corp</p>
+</div>
+</div>
+<div class="flex items-center gap-8">
+<span class="px-3 py-1 bg-violet-600 text-white text-[10px] font-bold uppercase tracking-wider rounded">Owner</span>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-green-500"></div>
+<span class="text-xs font-medium text-slate-600">Active</span>
+</div>
+<span class="material-symbols-outlined text-slate-400 cursor-pointer" data-icon="more_vert">more_vert</span>
+</div>
+</div>
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-600">SM</div>
+<div>
+<p class="font-semibold text-on-surface">Samuel Miller</p>
+<p class="text-xs text-slate-500">s.miller@atrium.corp</p>
+</div>
+</div>
+<div class="flex items-center gap-8">
+<span class="px-3 py-1 bg-blue-500 text-white text-[10px] font-bold uppercase tracking-wider rounded">Admin</span>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-green-500"></div>
+<span class="text-xs font-medium text-slate-600">Active</span>
+</div>
+<span class="material-symbols-outlined text-slate-400 cursor-pointer" data-icon="more_vert">more_vert</span>
+</div>
+</div>
+</div>
+</div>
+<div class="col-span-4 space-y-6">
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm">
+<h3 class="text-sm font-bold uppercase tracking-widest text-slate-500 mb-4">Pending Invites</h3>
+<div class="space-y-4">
+<div class="p-3 bg-surface-container-low rounded-lg flex items-center justify-between">
+<div>
+<p class="text-sm font-semibold">lucas@partner.com</p>
+<p class="text-[10px] uppercase font-bold text-amber-600">Manager</p>
+</div>
+<span class="material-symbols-outlined text-slate-400 text-sm" data-icon="schedule">schedule</span>
+</div>
+</div>
+</div>
+<div class="bg-primary text-white rounded-xl p-8 shadow-lg relative overflow-hidden">
+<div class="relative z-10">
+<h3 class="text-xl font-bold mb-2">Team Security</h3>
+<p class="text-sm text-primary-fixed-dim mb-6">Your organization has 2FA enabled for 84% of users.</p>
+<button class="bg-white text-primary px-4 py-2 rounded font-bold text-xs uppercase tracking-widest">Enforce 2FA</button>
+</div>
+<div class="absolute -right-8 -bottom-8 opacity-10">
+<span class="material-symbols-outlined text-[120px]" data-icon="security">security</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Invite User Modal Overlay -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/40 backdrop-blur-[2px]">
+<!-- Modal Box -->
+<div class="w-full max-w-[480px] bg-white rounded-xl shadow-2xl border border-outline-variant/20 overflow-hidden transform transition-all duration-300 scale-100">
+<div class="p-8">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h2 class="text-2xl font-semibold text-on-surface tracking-tight">Invite user</h2>
+<p class="text-sm text-on-surface-variant mt-1">Send an invitation link to a new team member.</p>
+</div>
+<button class="text-slate-400 hover:text-slate-600 transition-colors">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<form class="space-y-6">
+<!-- Email Input -->
+<div class="space-y-2">
+<label class="text-[11px] uppercase tracking-widest font-bold text-slate-500">Email Address</label>
+<div class="relative group">
+<input class="w-full bg-surface-container-lowest border border-outline-variant/40 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-0 focus:border-primary transition-all duration-200" placeholder="name@company.com" type="email"/>
+<div class="absolute bottom-0 left-0 h-0.5 bg-primary w-0 group-focus-within:w-full transition-all duration-300"></div>
+</div>
+</div>
+<!-- Role Selector -->
+<div class="space-y-2">
+<label class="text-[11px] uppercase tracking-widest font-bold text-slate-500">Assign Role</label>
+<div class="relative">
+<select class="w-full bg-surface-container-lowest border border-outline-variant/40 rounded-lg px-4 py-3 text-sm appearance-none focus:outline-none focus:ring-0 focus:border-primary transition-all duration-200 cursor-pointer">
+<option disabled="" selected="" value="">Select a role...</option>
+<option value="owner">Owner</option>
+<option value="admin">Admin</option>
+<option value="manager">Manager</option>
+<option value="member">Member</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
+<span class="material-symbols-outlined" data-icon="unfold_more">unfold_more</span>
+</div>
+</div>
+</div>
+<!-- Role Description Context -->
+<div class="bg-surface-container-low p-4 rounded-lg flex gap-3">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="info">info</span>
+<p class="text-[11px] text-slate-600 font-medium leading-relaxed">
+                                    Roles define specific permissions. Owners have full access to billing and organization settings. Admins can manage all users.
+                                </p>
+</div>
+<!-- Modal Actions -->
+<div class="flex items-center justify-end gap-3 pt-4">
+<button class="px-6 py-2.5 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors" type="button">
+                                    Cancel
+                                </button>
+<button class="px-8 py-2.5 bg-primary text-white rounded-lg text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-xl hover:opacity-90 active:scale-95 transition-all" type="submit">
+                                    Send invite
+                                </button>
+</div>
+</form>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

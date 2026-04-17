@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Management - The Architectural Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "error-container": "#ffdad6",
+                  "surface": "#f9f9ff",
+                  "on-secondary-container": "#fefcff",
+                  "surface-tint": "#732ee4",
+                  "outline": "#7b7487",
+                  "error": "#ba1a1a",
+                  "background": "#f9f9ff",
+                  "on-secondary-fixed-variant": "#004395",
+                  "secondary-fixed": "#d8e2ff",
+                  "tertiary": "#704500",
+                  "surface-container-high": "#e2e8f8",
+                  "surface-container-lowest": "#ffffff",
+                  "primary": "#630ed4",
+                  "tertiary-fixed-dim": "#ffb95f",
+                  "inverse-surface": "#2a313d",
+                  "surface-variant": "#dce2f3",
+                  "on-tertiary-fixed": "#2a1700",
+                  "primary-container": "#7c3aed",
+                  "secondary-container": "#2170e4",
+                  "on-tertiary-fixed-variant": "#653e00",
+                  "surface-dim": "#d3daea",
+                  "surface-container-low": "#f0f3ff",
+                  "on-primary-fixed": "#25005a",
+                  "on-background": "#151c27",
+                  "on-primary-fixed-variant": "#5a00c6",
+                  "surface-container": "#e7eefe",
+                  "on-tertiary": "#ffffff",
+                  "on-tertiary-container": "#ffe1c0",
+                  "on-secondary-fixed": "#001a42",
+                  "on-secondary": "#ffffff",
+                  "on-error": "#ffffff",
+                  "on-error-container": "#93000a",
+                  "secondary": "#0058be",
+                  "on-primary": "#ffffff",
+                  "tertiary-container": "#905b00",
+                  "inverse-primary": "#d2bbff",
+                  "outline-variant": "#ccc3d8",
+                  "surface-bright": "#f9f9ff",
+                  "on-surface": "#151c27",
+                  "surface-container-highest": "#dce2f3",
+                  "primary-fixed": "#eaddff",
+                  "on-surface-variant": "#4a4455",
+                  "secondary-fixed-dim": "#adc6ff",
+                  "on-primary-container": "#ede0ff",
+                  "inverse-on-surface": "#ebf1ff",
+                  "primary-fixed-dim": "#d2bbff",
+                  "tertiary-fixed": "#ffddb8"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.125rem",
+                  "lg": "0.25rem",
+                  "xl": "0.5rem",
+                  "full": "0.75rem"
+          },
+          "fontFamily": {
+                  "headline": ["Inter"],
+                  "body": ["Inter"],
+                  "label": ["Inter"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopNavBar Implementation -->
+<header class="bg-white dark:bg-slate-950 docked full-width top-0 border-b-0 sticky z-50">
+<div class="flex justify-between items-center w-full px-10 h-16 max-w-[1440px] mx-auto">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold text-slate-900 dark:text-white">The Architectural Admin</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 text-[11px] uppercase tracking-wider font-semibold" href="#">Dashboard</a>
+<a class="text-violet-700 dark:text-violet-400 font-semibold border-b-2 border-violet-600 pb-2 text-[11px] uppercase tracking-wider" href="#">Users</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 text-[11px] uppercase tracking-wider font-semibold" href="#">Activity</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors duration-150 text-[11px] uppercase tracking-wider font-semibold" href="#">Logs</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors duration-150 px-3 py-1.5 text-[11px] uppercase tracking-wider font-semibold">Support</button>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-container transition-all active:opacity-80 scale-98">Invite user</button>
+<img alt="Admin Avatar" class="w-8 h-8 rounded-full object-cover border border-outline-variant/20" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuqQAIUwY-27sCrbCVgLbGql-zyhlIUnyP7hr5l9rvbpwOrMHE67Eecs1k_0fTBrQGul69jcYrd4f7edKkAre85zXI23eRK2rUmv5WmfP3dQXAo6zNfsRdNuNN55pPojtWGPHVXDuREsnRaalSbkkRDJ8gMTtHo0EPuUg4ZNzP1wiGOJLWJ9A5AFQzv3rc7hDB4bnipX6WCsXPZyoS0Di_sVpXTrr3FsqIFtAv7_sIeGY8x_ss9XtMss_3tQA4ZGnIMZ8LERj-_PQ"/>
+</div>
+</div>
+</header>
+<div class="flex min-h-[calc(100vh-64px)]">
+<!-- SideNavBar Implementation -->
+<aside class="bg-slate-50 dark:bg-slate-900 fixed left-0 h-full w-64 border-r-0 flex flex-col py-6">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined">corporate_fare</span>
+</div>
+<div>
+<h2 class="text-lg font-black text-violet-700 dark:text-violet-400 leading-tight">Atrium Corp</h2>
+<p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Enterprise Admin</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 mx-2 hover:translate-x-1 transition-transform duration-200 text-sm font-medium" href="#">
+<span class="material-symbols-outlined">corporate_fare</span> Organization
+        </a>
+<a class="flex items-center gap-3 px-4 py-3 bg-white dark:bg-slate-800 text-violet-700 dark:text-violet-300 shadow-sm rounded-lg mx-2 transition-all ease-out text-sm font-medium" href="#">
+<span class="material-symbols-outlined">group</span> User Directory
+        </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 mx-2 hover:translate-x-1 transition-transform duration-200 text-sm font-medium" href="#">
+<span class="material-symbols-outlined">verified_user</span> Role Permissions
+        </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 mx-2 hover:translate-x-1 transition-transform duration-200 text-sm font-medium" href="#">
+<span class="material-symbols-outlined">list_alt</span> Access Logs
+        </a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 mx-2 hover:translate-x-1 transition-transform duration-200 text-sm font-medium" href="#">
+<span class="material-symbols-outlined">shield</span> Security Settings
+        </a>
+</nav>
+<div class="px-4 mt-auto space-y-4">
+<div class="bg-gradient-to-br from-primary to-secondary p-4 rounded-xl text-white">
+<p class="text-xs font-bold uppercase tracking-wider mb-2">Enterprise Plan</p>
+<p class="text-[11px] opacity-90 mb-3">Unlock advanced audit logs and SSO integration.</p>
+<button class="w-full bg-white text-primary py-2 rounded-lg text-xs font-bold hover:bg-slate-50 transition-colors">Upgrade Plan</button>
+</div>
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 mx-2 rounded-lg text-sm font-medium" href="#">
+<span class="material-symbols-outlined">settings</span> Settings
+          </a>
+<a class="flex items-center gap-3 px-4 py-2 text-error hover:bg-error-container/20 mx-2 rounded-lg text-sm font-medium" href="#">
+<span class="material-symbols-outlined">logout</span> Logout
+          </a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 flex-1 p-10 bg-surface">
+<!-- Top Section: Editorial Header -->
+<header class="mb-12">
+<div class="flex justify-between items-end mb-8">
+<div>
+<span class="text-[0.75rem] uppercase tracking-widest text-slate-500 font-semibold mb-2 block">System Administration</span>
+<h1 class="text-[2.75rem] font-medium tracking-tight text-on-surface leading-none">User Directory</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input class="pl-11 pr-4 py-3 w-80 bg-surface-container-lowest border-none ring-1 ring-outline-variant/40 rounded-lg text-sm focus:ring-2 focus:ring-primary focus:border-none transition-all outline-none" placeholder="Search members..." type="text" value="XYZ123"/>
+</div>
+<button class="flex items-center gap-2 px-4 py-3 bg-surface-container-high text-on-surface rounded-lg text-sm font-medium hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-lg">tune</span> Filters
+            </button>
+</div>
+</div>
+<!-- Metrics Bento Grid -->
+<div class="grid grid-cols-12 gap-6">
+<div class="col-span-12 md:col-span-4 bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/5">
+<p class="text-[11px] uppercase tracking-widest text-slate-500 font-bold mb-4">Total Directory</p>
+<div class="flex items-baseline gap-2">
+<span class="text-[3.5rem] font-medium leading-none tracking-tighter">0</span>
+<span class="text-sm font-medium text-slate-400">Total Users</span>
+</div>
+</div>
+<div class="col-span-12 md:col-span-4 bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/5">
+<p class="text-[11px] uppercase tracking-widest text-slate-500 font-bold mb-4">Active Sessions</p>
+<div class="flex items-baseline gap-2">
+<span class="text-[3.5rem] font-medium leading-none tracking-tighter text-secondary">0</span>
+<span class="text-sm font-medium text-slate-400">Now Online</span>
+</div>
+</div>
+<div class="col-span-12 md:col-span-4 bg-surface-container-lowest p-6 rounded-xl shadow-sm border border-outline-variant/5">
+<p class="text-[11px] uppercase tracking-widest text-slate-500 font-bold mb-4">Pending Invites</p>
+<div class="flex items-baseline gap-2">
+<span class="text-[3.5rem] font-medium leading-none tracking-tighter text-tertiary">12</span>
+<span class="text-sm font-medium text-slate-400">Awaiting Access</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Empty State Section -->
+<section class="bg-surface-container-low rounded-3xl min-h-[500px] flex flex-col items-center justify-center p-12 text-center">
+<!-- Tonal Architectural Illustration -->
+<div class="relative w-64 h-64 mb-10 flex items-center justify-center">
+<!-- Background Abstract Elements -->
+<div class="absolute inset-0 bg-primary/5 rounded-full blur-3xl"></div>
+<div class="relative z-10 w-48 h-48 bg-surface-container-lowest rounded-3xl shadow-xl border border-outline-variant/10 flex flex-col p-6">
+<div class="flex items-center gap-3 mb-4 opacity-20">
+<div class="w-8 h-8 rounded-full bg-slate-200"></div>
+<div class="flex-1 space-y-2">
+<div class="h-2 w-full bg-slate-200 rounded"></div>
+<div class="h-2 w-1/2 bg-slate-200 rounded"></div>
+</div>
+</div>
+<div class="flex items-center gap-3 mb-4 opacity-10">
+<div class="w-8 h-8 rounded-full bg-slate-200"></div>
+<div class="flex-1 space-y-2">
+<div class="h-2 w-full bg-slate-200 rounded"></div>
+<div class="h-2 w-1/2 bg-slate-200 rounded"></div>
+</div>
+</div>
+<!-- The Search Focus -->
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-6xl text-primary font-light" style="font-variation-settings: 'wght' 200;">person_search</span>
+</div>
+</div>
+</div>
+<!-- Decorative Floating Element -->
+<div class="absolute -right-4 -bottom-4 w-20 h-20 bg-secondary/10 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/40">
+<span class="material-symbols-outlined text-secondary text-3xl">close</span>
+</div>
+</div>
+<div class="max-w-md">
+<h2 class="text-2xl font-medium tracking-tight text-on-surface mb-3">No users found</h2>
+<p class="text-slate-500 text-sm leading-relaxed mb-8">
+            We couldn't find any members matching <span class="text-primary font-semibold">"XYZ123"</span>. Try a different name or email address.
+          </p>
+<div class="flex flex-col items-center gap-4">
+<a class="text-primary font-semibold text-sm hover:text-primary-container transition-colors flex items-center gap-1 border-b border-primary/30 pb-0.5" href="#">
+              Clear search query
+            </a>
+<span class="text-slate-300 text-[10px] uppercase tracking-widest font-bold">or</span>
+<button class="bg-white border border-outline-variant/30 text-slate-700 px-6 py-3 rounded-lg text-sm font-medium hover:bg-surface-container-highest transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">person_add</span> Invite New User
+            </button>
+</div>
+</div>
+</section>
+<!-- Footer / Pagination Area (Simplified for Empty State) -->
+<footer class="mt-12 flex justify-between items-center text-slate-400">
+<p class="text-[11px] uppercase tracking-widest font-bold">Showing 0 of 0 results</p>
+<div class="flex gap-2">
+<button class="w-10 h-10 rounded-lg flex items-center justify-center opacity-30 cursor-not-allowed border border-outline-variant/30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-10 h-10 rounded-lg flex items-center justify-center opacity-30 cursor-not-allowed border border-outline-variant/30" disabled="">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</footer>
+</main>
+</div>
+<!-- Role-based Legend (Design System Showcase) -->
+<div class="fixed bottom-10 right-10 flex gap-4 pointer-events-none">
+<div class="bg-white/80 backdrop-blur-xl p-4 rounded-2xl shadow-2xl border border-outline-variant/10">
+<p class="text-[10px] uppercase tracking-widest font-bold text-slate-400 mb-3">Role Hierarchy</p>
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#7C3AED]"></span>
+<span class="text-[11px] font-medium text-slate-600">Owner</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#3B82F6]"></span>
+<span class="text-[11px] font-medium text-slate-600">Admin</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#F59E0B]"></span>
+<span class="text-[11px] font-medium text-slate-600">Manager</span>
+</div>
+</div>
+</div>
+</div>
+</body></html>

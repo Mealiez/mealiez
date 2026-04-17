@@ -1,3 +1,8 @@
+// Zod v4 — use { error: '...' } not { errorMap: ... }
+// Zod v4 — use z.string().min(n, 'msg') for field errors
+// Zod v4 — errorMap was removed in v4
+// Zod version check: 4.3.6
+
 import { z } from 'zod'
 
 /**
@@ -15,9 +20,7 @@ export const InviteUserSchema = z.object({
     .optional()
     .nullable(),
   role: z.enum(['admin', 'manager', 'member'], {
-    errorMap: () => ({
-      message: 'Role must be admin, manager, or member'
-    })
+    error: 'Role must be admin, manager, or member'
   })
 })
 
@@ -26,7 +29,9 @@ export const InviteUserSchema = z.object({
  * Note: 'owner' is excluded to prevent unauthorized role escalation.
  */
 export const UpdateRoleSchema = z.object({
-  role: z.enum(['admin', 'manager', 'member'])
+  role: z.enum(['admin', 'manager', 'member'], {
+    error: 'Role must be admin, manager, or member'
+  })
 })
 
 /**
