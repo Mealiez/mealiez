@@ -95,7 +95,13 @@ export async function PATCH(
       updateData.is_active = validated.data.is_active;
       if (!validated.data.is_active) {
         updateData.ended_at = new Date().toISOString();
+      } else {
+        updateData.ended_at = null;
       }
+    }
+
+    if (validated.data.scan_mode !== undefined) {
+      updateData.scan_mode = validated.data.scan_mode;
     }
 
     const { error: updateError } = await supabase

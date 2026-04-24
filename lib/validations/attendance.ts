@@ -19,12 +19,14 @@ export const CreateSessionSchema = z.object({
     .uuid('Invalid plan item ID')
     .optional()
     .nullable(),
+  scan_mode: z.enum(['session', 'member']).default('session'),
 });
 
 export const UpdateSessionSchema = z.object({
   label: z.string().min(2).max(100).trim()
     .optional(),
   is_active: z.boolean().optional(),
+  scan_mode: z.enum(['session', 'member']).optional(),
 });
 
 export const MarkAttendanceSchema = z.object({

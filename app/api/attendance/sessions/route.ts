@@ -117,6 +117,7 @@ export async function POST(req: NextRequest) {
         session_date: validated.data.session_date,
         meal_type: validated.data.meal_type,
         label: validated.data.label,
+        scan_mode: validated.data.scan_mode,
         is_active: true,
         started_by: currentUser.id,
       })
