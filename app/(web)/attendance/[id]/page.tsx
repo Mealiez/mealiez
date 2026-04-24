@@ -40,6 +40,8 @@ export default async function SessionPage({ params }: { params: { id: string } }
       )
     : null;
 
+  const canManage = ['owner', 'admin', 'manager'].includes(user.role);
+
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* Breadcrumb Navigation */}
@@ -80,16 +82,54 @@ export default async function SessionPage({ params }: { params: { id: string } }
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-        {/* Left: QR Code Display */}
+        {/* Left: QR Interaction */}
         <div className="bg-white p-10 rounded-2xl border border-gray-200 shadow-sm flex flex-col items-center justify-center min-h-[500px]">
-          <QRDisplay
-            sessionId={session.id}
-            initialToken={qrToken}
-            isActive={session.is_active}
-            mealType={session.meal_type}
-            sessionDate={session.session_date.toString()}
-            tenantId={session.tenant_id}
-          />
+          {canManage ? (
+            <QRDisplay
+              session={session}
+              initialToken={qrToken}
+              isActive={session.is_active}
+              mealType={session.meal_type}
+              sessionDate={session.session_date.toString()}
+              tenantId={session.tenant_id}
+            />
+          ) : (
+            <div className="w-full max-w-sm flex flex-col items-center space-y-8">
+               {session.is_active ? (
+                 <>
+                   {session.scan_mode === 'member' ? (
+                      <div className="text-center space-y-6">
+                         <div className="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto">
+                           <span className="text-2xl">🪪</span>
+                         </div>
+                         <h2 className="text-xl font-black text-gray-900">Member Scan Mode</h2>
+                         <p className="text-sm text-gray-500">The admin is scanning badges. Please show your QR code to the admin.</p>
+                         <MyQRModal />
+                      </div>
+                   ) : (
+                      <div className="text-center space-y-6">
+                         <div className="w-16 h-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center mx-auto">
+                           <span className="text-2xl">📷</span>
+                         </div>
+                         <h2 className="text-xl font-black text-gray-900">Session QR Mode</h2>
+                         <p className="text-sm text-gray-500">Scan the session QR code shown on the screen using your camera.</p>
+                         <MemberScannerModal />
+                      </div>
+                   )}
+                 </>
+               ) : (
+                  <div className="text-center space-y-4">
+                    <div className="w-16 h-16 bg-gray-50 text-gray-400 rounded-full flex items-center justify-center mx-auto">
+                       <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                       </svg>
+                    </div>
+                    <h2 className="text-xl font-bold text-gray-900">Session Closed</h2>
+                    <p className="text-sm text-gray-500">This attendance session is no longer active.</p>
+                  </div>
+               )}
+            </div>
+          )}
         </div>
 
         {/* Right: Live Attendance Log */}

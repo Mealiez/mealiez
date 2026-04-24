@@ -18,7 +18,7 @@ export default async function AttendancePage() {
     .from('attendance_sessions')
     .select(`
       id, session_date, meal_type, label,
-      is_active, started_at, ended_at
+      is_active, started_at, ended_at, scan_mode
     `)
     .eq('session_date', today)
     .order('started_at', { ascending: false });

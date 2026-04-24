@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import CreateSessionModal from './CreateSessionModal';
+import MyQRModal from '@/components/web/MyQRModal';
+import MemberScannerModal from '@/components/web/MemberScannerModal';
 
 /*
  * CLIENT COMPONENT: Attendance List Table
@@ -17,6 +19,7 @@ export type AttendanceSession = {
   is_active: boolean;
   started_at: string;
   ended_at: string | null;
+  scan_mode?: 'session' | 'member';
 };
 
 interface AttendanceTableProps {
@@ -57,10 +60,15 @@ export default function AttendanceTable({ initialSessions, canManage }: Attendan
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
-        {canManage && (
-          <CreateSessionModal onSessionCreated={handleSessionCreated} />
-        )}
+      <div className="flex justify-between items-center">
+        <div>
+           {!canManage && <MyQRModal />}
+        </div>
+        <div className="flex gap-3">
+          {canManage && (
+            <CreateSessionModal onSessionCreated={handleSessionCreated} />
+          )}
+        </div>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
@@ -123,6 +131,19 @@ export default function AttendanceTable({ initialSessions, canManage }: Attendan
                           {isLoading === session.id ? 'Closing...' : 'Close'}
                         </button>
                       )}
+                      
+                      {session.is_active && !canManage && (
+                        <MemberScannerModal />
+                      )}
+
+                      {session.is_active && !canManage && (
+                        <MyQRModal trigger={
+                          <button className="text-indigo-600 hover:text-indigo-800 font-bold text-sm">
+                            My QR
+                          </button>
+                        } />
+                      )}
+
                       <Link
                         href={`/attendance/${session.id}`}
                         className="text-gray-600 hover:text-gray-900 font-bold text-sm"

@@ -28,6 +28,7 @@ export default function CreateSessionModal({ onSessionCreated }: CreateSessionMo
     session_date: new Date().toISOString().split('T')[0],
     meal_type: 'lunch',
     label: '',
+    scan_mode: 'session',
   });
 
   // Auto-generate label on meal_type or date change
@@ -121,6 +122,35 @@ export default function CreateSessionModal({ onSessionCreated }: CreateSessionMo
                   placeholder="e.g. Lunch - 05 Jan 2025"
                   required
                 />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="block text-sm font-bold text-gray-700">Initial Scan Mode</label>
+                <div className="flex items-center gap-2 p-1 bg-gray-50 rounded-xl border border-gray-200">
+                  <button
+                    type="button"
+                    onClick={() => setForm(prev => ({ ...prev, scan_mode: 'session' }))}
+                    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
+                      form.scan_mode === 'session' ? 'bg-white shadow text-blue-600' : 'text-gray-400 hover:text-gray-600'
+                    }`}
+                  >
+                    📺 Session QR
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setForm(prev => ({ ...prev, scan_mode: 'member' }))}
+                    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
+                      form.scan_mode === 'member' ? 'bg-white shadow text-blue-600' : 'text-gray-400 hover:text-gray-600'
+                    }`}
+                  >
+                    🪪 Member Scan
+                  </button>
+                </div>
+                <p className="text-[10px] text-gray-400 mt-1">
+                  {form.scan_mode === 'session' 
+                    ? 'Members scan the screen to check in.' 
+                    : 'Admin scans member badges using the camera.'}
+                </p>
               </div>
 
               {error && (
