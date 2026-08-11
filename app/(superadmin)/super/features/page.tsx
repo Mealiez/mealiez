@@ -10,7 +10,8 @@ const FEATURE_KEYS = [
   'custom_reports',
   'billing',
   'branch_management',
-  'settings_module'
+  'settings_module',
+  'channel_attendance'
 ]
 
 export default async function FeatureControlPage() {

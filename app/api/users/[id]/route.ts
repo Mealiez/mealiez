@@ -110,10 +110,11 @@ export async function PATCH(
     }
 
     const body = await request.json()
-    const { branch_id, designation_id, enrollment_no } = body
+    const { branch_id, channel_id, designation_id, enrollment_no } = body
 
     const updateData: Record<string, any> = {}
     if (branch_id !== undefined) updateData.branch_id = branch_id
+    if (channel_id !== undefined) updateData.channel_id = channel_id
     if (designation_id !== undefined) updateData.designation_id = designation_id
     if (enrollment_no !== undefined) updateData.enrollment_no = enrollment_no
 

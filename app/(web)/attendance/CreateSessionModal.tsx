@@ -39,7 +39,9 @@ export default function CreateSessionModal({ onSessionCreated, currentUser }: Cr
     meal_type: 'lunch',
     label: '',
     scan_mode: 'session',
-    branch_id: ''
+    branch_id: '',
+    attendance_mode: 'BRANCH',
+    project_name: ''
   });
 
   // Fetch branches
@@ -83,7 +85,8 @@ export default function CreateSessionModal({ onSessionCreated, currentUser }: Cr
     // but we can pass it for clarity if we want.
     const payload = {
       ...form,
-      branch_id: currentUser.role === 'admin' ? (form.branch_id || null) : (currentUser.branch_id || null)
+      branch_id: form.attendance_mode === 'BRANCH' ? (currentUser.role === 'admin' ? (form.branch_id || null) : (currentUser.branch_id || null)) : null,
+      project_name: form.attendance_mode === 'CHANNEL' ? form.project_name : null
     }
 
     try {
@@ -159,7 +162,31 @@ export default function CreateSessionModal({ onSessionCreated, currentUser }: Cr
                 />
               </div>
 
-              {currentUser.role === 'admin' && (
+              <div className="space-y-1.5">
+                <label className="block text-sm font-bold text-gray-700">Attendance Location</label>
+                <div className="flex items-center gap-2 p-1 bg-gray-50 rounded-xl border border-gray-200">
+                  <button
+                    type="button"
+                    onClick={() => setForm(prev => ({ ...prev, attendance_mode: 'BRANCH' }))}
+                    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
+                      form.attendance_mode === 'BRANCH' ? 'bg-white shadow text-blue-600' : 'text-gray-400 hover:text-gray-600'
+                    }`}
+                  >
+                    🏢 Branch Based
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setForm(prev => ({ ...prev, attendance_mode: 'CHANNEL' }))}
+                    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
+                      form.attendance_mode === 'CHANNEL' ? 'bg-white shadow text-blue-600' : 'text-gray-400 hover:text-gray-600'
+                    }`}
+                  >
+                    📍 Channel Based
+                  </button>
+                </div>
+              </div>
+
+              {form.attendance_mode === 'BRANCH' && currentUser.role === 'admin' && (
                 <div className="space-y-1.5">
                   <label className="block text-sm font-bold text-gray-700">Mess Branch</label>
                   <select
@@ -173,6 +200,22 @@ export default function CreateSessionModal({ onSessionCreated, currentUser }: Cr
                       <option key={branch.id} value={branch.id}>{branch.name}</option>
                     ))}
                   </select>
+                </div>
+              )}
+
+              {form.attendance_mode === 'CHANNEL' && (
+                <div className="space-y-1.5 p-3 bg-indigo-50 border border-indigo-100 rounded-xl">
+                  <label className="block text-sm font-bold text-indigo-900">Project / Site (Optional)</label>
+                  <input
+                    type="text"
+                    value={form.project_name}
+                    onChange={e => setForm(prev => ({ ...prev, project_name: e.target.value }))}
+                    className="w-full border border-indigo-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition-all mt-1"
+                    placeholder="e.g. DHD Infra"
+                  />
+                  <p className="text-[10px] text-indigo-700/80 mt-2 flex gap-1">
+                    <span>📍</span> Channel will be automatically detected using the worker's GPS location. Workers must allow location access when scanning the attendance QR.
+                  </p>
                 </div>
               )}
 

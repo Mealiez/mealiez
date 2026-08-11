@@ -10,21 +10,26 @@ import { toast } from 'sonner'
 interface AdminUserEditProps {
   userId: string
   initialBranchId: string | null
+  initialChannelId: string | null
   initialDesignationId: string | null
   branches: { id: string, name: string }[]
+  channels: { id: string, name: string }[]
   designations: { id: string, name: string }[]
 }
 
 export default function AdminUserEdit({
   userId,
   initialBranchId,
+  initialChannelId,
   initialDesignationId,
   branches,
+  channels,
   designations
 }: AdminUserEditProps) {
   const router = useRouter()
   const [isSaving, setIsSaving] = useState(false)
   const [branchId, setBranchId] = useState<string>(initialBranchId || 'none')
+  const [channelId, setChannelId] = useState<string>(initialChannelId || 'none')
   const [designationId, setDesignationId] = useState<string>(initialDesignationId || 'none')
 
   const handleSave = async () => {
@@ -35,6 +40,7 @@ export default function AdminUserEdit({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           branch_id: branchId === 'none' ? null : branchId,
+          channel_id: channelId === 'none' ? null : channelId,
           designation_id: designationId === 'none' ? null : designationId
         })
       })
@@ -54,11 +60,12 @@ export default function AdminUserEdit({
   }
 
   const hasChanges = (branchId === 'none' ? null : branchId) !== initialBranchId || 
+                     (channelId === 'none' ? null : channelId) !== initialChannelId ||
                      (designationId === 'none' ? null : designationId) !== initialDesignationId
 
   return (
     <div className="space-y-6 pt-4 border-t border-gray-100">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div className="space-y-2">
           <Label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Change Branch</Label>
           <select 
@@ -69,6 +76,20 @@ export default function AdminUserEdit({
             <option value="none">Unassigned / Global</option>
             {branches.map(b => (
               <option key={b.id} value={b.id}>{b.name}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="space-y-2">
+          <Label className="text-[10px] font-black uppercase text-gray-400 tracking-widest ml-1">Change Channel</Label>
+          <select 
+            value={channelId} 
+            onChange={(e) => setChannelId(e.target.value)}
+            className="w-full h-11 px-4 rounded-xl border border-gray-100 bg-white font-bold text-sm outline-none focus:ring-2 focus:ring-blue-500 transition-all appearance-none"
+          >
+            <option value="none">Unassigned</option>
+            {channels.map(c => (
+              <option key={c.id} value={c.id}>{c.name}</option>
             ))}
           </select>
         </div>

@@ -21,6 +21,8 @@ export const CreateSessionSchema = z.object({
     .nullable(),
   scan_mode: z.enum(['session', 'member']).default('session'),
   branch_id: z.string().uuid('Invalid branch ID').optional().nullable(),
+  attendance_mode: z.enum(['BRANCH', 'CHANNEL']).default('BRANCH'),
+  project_name: z.string().optional().nullable(),
 });
 
 export const UpdateSessionSchema = z.object({
@@ -36,6 +38,10 @@ export const MarkAttendanceSchema = z.object({
     .min(1, 'Token required'),
   // Raw token string from QR decode
   // Server verifies signature and expiry
+  latitude: z.number().optional().nullable(),
+  longitude: z.number().optional().nullable(),
+  accuracy: z.number().optional().nullable(),
+  location_timestamp: z.number().optional().nullable(),
 });
 
 export const ManualMarkSchema = z.object({

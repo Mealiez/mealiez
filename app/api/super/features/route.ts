@@ -20,7 +20,8 @@ const FEATURE_KEYS = [
   'custom_reports',
   'billing',
   'branch_management',
-  'settings_module'
+  'settings_module',
+  'channel_attendance'
 ]
 
 export async function PATCH(request: NextRequest) {

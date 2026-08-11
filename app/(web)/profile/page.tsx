@@ -39,7 +39,7 @@ export default function MyProfilePage() {
 
       const { data: profile } = await supabase
         .from('users')
-        .select('*, tenants(name), designation:designations(name), branch:branches(name)')
+        .select('*, tenants(name), designation:designations(name), branch:branches(name), channel:channels(name)')
         .eq('auth_id', authUser.id)
         .single();
 
@@ -273,6 +273,14 @@ export default function MyProfilePage() {
                         <Label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Current Branch</Label>
                         <Input 
                           value={user.branch?.name || 'Unassigned'} 
+                          readOnly
+                          className="rounded-xl border-gray-100 bg-gray-100 font-bold h-11 cursor-not-allowed opacity-75"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Current Channel</Label>
+                        <Input 
+                          value={user.channel?.name || 'Unassigned'} 
                           readOnly
                           className="rounded-xl border-gray-100 bg-gray-100 font-bold h-11 cursor-not-allowed opacity-75"
                         />

@@ -13,6 +13,18 @@ import FeatureToggle from './FeatureToggle'
  * side-effect free builds and secure credential handling.
  */
 
+const FEATURE_KEYS = [
+  'meal_management',
+  'attendance_tracking',
+  'inventory_management',
+  'pre_meal_requests',
+  'custom_reports',
+  'billing',
+  'branch_management',
+  'settings_module',
+  'channel_attendance'
+]
+
 export default async function MessDetailPage({ params }: { params: { id: string } }) {
   const superUser = await requireSuperAdmin()
   
@@ -184,28 +196,28 @@ export default async function MessDetailPage({ params }: { params: { id: string 
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {features.map(f => (
-                <div key={f.feature_key} className="flex items-center justify-between p-4 bg-gray-800/40 border border-gray-800 rounded-xl">
-                  <div>
-                    <p className="text-sm font-medium text-gray-200 capitalize">
-                      {f.feature_key.replace(/_/g, ' ')}
-                    </p>
-                    <p className="text-[10px] text-indigo-400 font-medium uppercase mt-0.5">
-                      Super Admin Override
-                    </p>
+              {FEATURE_KEYS.map(key => {
+                const existing = features.find(f => f.feature_key === key)
+                const isEnabled = existing ? existing.is_enabled : false
+                
+                return (
+                  <div key={key} className="flex items-center justify-between p-4 bg-gray-800/40 border border-gray-800 rounded-xl">
+                    <div>
+                      <p className="text-sm font-medium text-gray-200 capitalize">
+                        {key.replace(/_/g, ' ')}
+                      </p>
+                      <p className="text-[10px] text-indigo-400 font-medium uppercase mt-0.5">
+                        Super Admin Override
+                      </p>
+                    </div>
+                    <FeatureToggle
+                      tenantId={tenant.id}
+                      featureKey={key}
+                      initialEnabled={isEnabled}
+                    />
                   </div>
-                  <FeatureToggle
-                    tenantId={tenant.id}
-                    featureKey={f.feature_key}
-                    initialEnabled={f.is_enabled}
-                  />
-                </div>
-              ))}
-              {features.length === 0 && (
-                <p className="text-gray-500 text-sm italic col-span-full py-4 text-center bg-gray-800/20 rounded-xl">
-                  No feature flags found for this tenant. Run seed.
-                </p>
-              )}
+                )
+              })}
             </div>
           </div>
         </div>

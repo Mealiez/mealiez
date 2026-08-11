@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   Menu,
   MapPin,
+  Map,
   Utensils,
   Shield
 } from 'lucide-react'
@@ -46,6 +47,12 @@ const navItems = [
     href:  '/branches',
     icon:  MapPin,
     requiredFeature: 'branch_management'
+  },
+  {
+    label: 'Channels',
+    href:  '/channels',
+    icon:  Map,
+    requiredFeature: 'channel_attendance'
   },
   {
     label: 'Meals',
@@ -115,9 +122,9 @@ export default function Sidebar({ user, enabledFeatures = [] }: SidebarProps) {
       return true
     }
 
-    // Managers: No Users, Settings, or Branches
+    // Managers: No Users, Settings, Branches, or Channels
     if (user.role === 'manager') {
-      return !['Users', 'Settings', 'Branches'].includes(item.label)
+      return !['Users', 'Settings', 'Branches', 'Channels'].includes(item.label)
     }
 
     return false

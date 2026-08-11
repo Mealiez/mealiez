@@ -114,10 +114,9 @@ export async function POST(req: NextRequest) {
 
     const supabase = await createClient();
 
-    // STEP 6: Verify session is still active and check branch assignment
     const { data: session, error: sessionError } = await supabase
       .from('attendance_sessions')
-      .select('id, is_active, label, branch_id')
+      .select('id, is_active, label, branch_id, attendance_mode, project_name')
       .eq('id', result.payload.session_id)
       .eq('tenant_id', currentUser.tenant_id)
       .single();
@@ -133,27 +132,99 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // BRANCH VERIFICATION: Ensure user belongs to the session's branch
-    // IF session.branch_id is NULL, it's a GLOBAL session (accessible to all branches)
-    if (session.branch_id && session.branch_id !== (currentUser.branch_id || null)) {
-      return NextResponse.json(
-        { 
-          error: 'Branch Mismatch: You are not registered with this branch.', 
-          code: 'BRANCH_MISMATCH' 
-        },
-        { status: 403 }
-      );
+    let verification_status = 'VERIFIED';
+    let detected_channel_id = null;
+    let assigned_channel_id = null;
+    let location_source = null;
+
+    if (session.attendance_mode === 'CHANNEL') {
+      const { latitude, longitude, accuracy, location_timestamp } = validated.data;
+      
+      if (!latitude || !longitude) {
+        return NextResponse.json(
+          { error: 'Location coordinates required for channel-based attendance.', code: 'LOCATION_UNAVAILABLE' },
+          { status: 400 }
+        );
+      }
+
+      if (accuracy && accuracy > 150) {
+        return NextResponse.json(
+          { error: 'Your location accuracy is too low. Please move to an open area and try again.', code: 'LOW_ACCURACY' },
+          { status: 400 }
+        );
+      }
+
+      // Fetch user's assigned channel
+      const { data: userRecord } = await supabase
+        .from('users')
+        .select('channel_id')
+        .eq('id', currentUser.id)
+        .single();
+      assigned_channel_id = userRecord?.channel_id || null;
+
+      // Detect channel using RPC
+      const { data: detectedChannelId, error: detectError } = await supabase.rpc('detect_channel', {
+        p_tenant_id: currentUser.tenant_id,
+        p_project_name: session.project_name || null,
+        p_latitude: latitude,
+        p_longitude: longitude,
+        p_accuracy: accuracy || 0
+      });
+
+      if (detectError) {
+        console.error('Geofence error', detectError);
+      } else {
+        detected_channel_id = detectedChannelId;
+      }
+
+      location_source = 'GPS_GEOFENCE';
+
+      if (!detected_channel_id) {
+        return NextResponse.json(
+          { error: 'No active work channel was detected at your current location.', code: 'LOCATION_UNAVAILABLE' },
+          { status: 403 }
+        );
+      }
+
+      if (assigned_channel_id !== detected_channel_id) {
+        verification_status = 'CHANNEL_MISMATCH';
+      }
+    } else {
+      // BRANCH VERIFICATION: Ensure user belongs to the session's branch
+      if (session.branch_id && session.branch_id !== (currentUser.branch_id || null)) {
+        return NextResponse.json(
+          { 
+            error: 'Branch Mismatch: You are not registered with this branch.', 
+            code: 'BRANCH_MISMATCH' 
+          },
+          { status: 403 }
+        );
+      }
     }
 
     // STEP 7: Insert attendance record (idempotent)
-    const { data: record, error: recordError } = await supabase
-      .from('attendance_records')
-      .insert({
+    const insertPayload: any = {
         tenant_id: currentUser.tenant_id,
         session_id: result.payload.session_id,
         user_id: currentUser.id,
-        method: 'qr'
-      })
+        method: 'qr',
+        attendance_mode: session.attendance_mode || 'BRANCH',
+    };
+
+    if (session.attendance_mode === 'CHANNEL') {
+        insertPayload.latitude = validated.data.latitude;
+        insertPayload.longitude = validated.data.longitude;
+        insertPayload.gps_accuracy = validated.data.accuracy;
+        insertPayload.location_timestamp = validated.data.location_timestamp ? new Date(validated.data.location_timestamp).toISOString() : new Date().toISOString();
+        insertPayload.assigned_channel_id = assigned_channel_id;
+        insertPayload.detected_channel_id = detected_channel_id;
+        insertPayload.location_source = location_source;
+        insertPayload.verification_status = verification_status;
+    }
+
+    const { data: record, error: recordError } = await supabase
+      .from('attendance_records')
+      .insert(insertPayload)
       .select()
       .single();
 
@@ -167,6 +238,14 @@ export async function POST(req: NextRequest) {
         }, { status: 200 });
       }
       throw recordError;
+    }
+
+    if (session.attendance_mode === 'CHANNEL' && verification_status === 'CHANNEL_MISMATCH') {
+      return NextResponse.json({
+        status: 'CHANNEL_MISMATCH',
+        assigned_channel_id,
+        detected_channel_id
+      }, { status: 403 });
     }
 
     return NextResponse.json({

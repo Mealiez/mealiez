@@ -25,7 +25,8 @@ async function UserDetails({ id, currentUserRole }: { id: string, currentUserRol
         logo_url
       ),
       branch:branches (id, name),
-      designation:designations (id, name)
+      designation:designations (id, name),
+      channel:channels (id, name)
     `)
     .eq('id', id)
     .single()
@@ -51,6 +52,7 @@ async function UserDetails({ id, currentUserRole }: { id: string, currentUserRol
   // Fetch dropdown options for admin edit
   const { data: branches } = await supabase.from('branches').select('id, name').eq('is_active', true)
   const { data: designations } = await supabase.from('designations').select('id, name')
+  const { data: channels } = await supabase.from('channels').select('id, name').eq('is_active', true)
 
   const isAdmin = currentUserRole === 'admin'
 
@@ -104,6 +106,10 @@ async function UserDetails({ id, currentUserRole }: { id: string, currentUserRol
               <div className="flex items-center justify-between text-xs">
                 <span className="font-black text-gray-400 uppercase tracking-widest">Branch</span>
                 <span className="text-gray-900 font-black uppercase tracking-tighter">{user.branch?.name || 'Unassigned'}</span>
+              </div>
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-black text-gray-400 uppercase tracking-widest">Channel</span>
+                <span className="text-gray-900 font-black uppercase tracking-tighter">{user.channel?.name || 'Unassigned'}</span>
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="font-black text-gray-400 uppercase tracking-widest">Designation</span>
@@ -180,8 +186,10 @@ async function UserDetails({ id, currentUserRole }: { id: string, currentUserRol
                 <AdminUserEdit 
                   userId={user.id}
                   initialBranchId={user.branch_id}
+                  initialChannelId={user.channel_id}
                   initialDesignationId={user.designation_id}
                   branches={branches || []}
+                  channels={channels || []}
                   designations={designations || []}
                 />
               )}
