@@ -39,7 +39,7 @@ const SETTINGS_SECTIONS = [
 ];
 
 export default function SettingsSidebar() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const searchParams = useSearchParams();
   const currentSection = searchParams.get('section') || 'timezone';
 

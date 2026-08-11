@@ -96,7 +96,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ user, enabledFeatures = [] }: SidebarProps) {
-  const [isOpen, setIsOpen] = useState(true)
+  const [isOpen, setIsOpen] = useState(false)
 
   const filteredItems = navItems.filter(item => {
     // 1. Feature Flag Check

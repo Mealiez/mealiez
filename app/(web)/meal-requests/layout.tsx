@@ -19,7 +19,7 @@ interface MealRequestLayoutProps {
 }
 
 export default function MealRequestLayout({ children }: MealRequestLayoutProps) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const pathname = usePathname();
 
   // Navigation items for Manager+

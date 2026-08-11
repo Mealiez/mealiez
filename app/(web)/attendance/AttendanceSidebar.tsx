@@ -47,7 +47,7 @@ interface AttendanceSidebarProps {
 }
 
 export default function AttendanceSidebar({ userRole }: AttendanceSidebarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const pathname = usePathname();
 
   const filteredMenu = menuItems.filter(item => item.roles.includes(userRole));

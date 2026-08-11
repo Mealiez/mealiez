@@ -36,7 +36,7 @@ const navItems = [
 ]
 
 export default function InventorySidebar() {
-  const [isOpen, setIsOpen] = useState(true)
+  const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
 
   return (
